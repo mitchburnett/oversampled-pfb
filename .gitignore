@@ -1,0 +1,6 @@
+# ignore file
+
+# binary and data files
+*.bin
+*.out
+*.dat
