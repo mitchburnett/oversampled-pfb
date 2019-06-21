@@ -28,7 +28,8 @@ struct os_pfb_config : hls::ip_fft::params_t {
 typedef hls::ip_fft::config_t<os_pfb_config> os_pfb_config_t;
 typedef hls::ip_fft::status_t<os_pfb_config> os_pfb_status_t;
 
-void os_pfb(cx_datain_t in[M], os_pfb_axis_t out[M], bool* overflow);
+//void os_pfb(cx_datain_t in[M], cx_dataout_t out[M], int shift_states[SHIFT_STATES], bool* overflow);
+void os_pfb(cx_datain_t in[D], os_pfb_axis_t out[M], bool* overflow);
 
 #endif // OS_PFB_H
 

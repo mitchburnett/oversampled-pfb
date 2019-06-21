@@ -3,7 +3,7 @@
 
 #include "os_pfb.h"
 
-void polyphase_filter(cx_datain_t in[M], cx_dataout_t filter_out[M], os_pfb_config_t* ifft_config) {
+void polyphase_filter(cx_datain_t in[D], cx_dataout_t filter_out[M], os_pfb_config_t* ifft_config) {
 
   // filter taps
   const coeff_t h[L] = {
@@ -50,7 +50,7 @@ void polyphase_filter(cx_datain_t in[M], cx_dataout_t filter_out[M], os_pfb_conf
   return;
 }
 
-// Currently not used becasuse ran into synthesis problems complaining dataflow
+// Currently not used because ran into synthesis problems complaining dataflow
 // optimization requirements are violated
 void apply_phase_correction (cx_dataout_t filter_out[M], cx_dataout_t ifft_buffer[M]) {
 
@@ -84,7 +84,8 @@ void be(cx_dataout_t ifft_out[M], os_pfb_axis_t out[M], os_pfb_status_t* ifft_st
   return;
 }
 
-void os_pfb(cx_datain_t in[M], os_pfb_axis_t out[M], bool* ovflow)
+//void os_pfb(cx_datain_t in[M], cx_dataout_t out[M], int shift_states[SHIFT_STATES], bool* overflow)
+void os_pfb(cx_datain_t in[D], os_pfb_axis_t out[M], bool* ovflow)
 {
 #pragma HLS interface axis depth=1 port=ovflow
 #pragma HLS interface axis depth=FFT_LENGTH port=in,out
