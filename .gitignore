@@ -4,4 +4,7 @@
 *.bin
 *.out
 *.dat
+
+# checkpoint files
+*.ipynb_checkpoints
 *.cache*
