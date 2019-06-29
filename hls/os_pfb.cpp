@@ -11,7 +11,8 @@ void polyphase_filter(cx_datain_t in[D], cx_dataout_t filter_out[M], os_pfb_conf
   };
 
   // shift states that have been pre-determined. Need to figure out how to auto-generate
-  static int shift_states[SHIFT_STATES] = {0, 24, 16, 8};
+  static int shift_states[SHIFT_STATES] = {0, 8, 16, 24};
+  static int state_idx = 0; static int shift_states[SHIFT_STATES] = {0, 24, 16, 8};
 
   ifft_config->setDir(0); //inverse transform
 
@@ -24,6 +25,8 @@ void polyphase_filter(cx_datain_t in[D], cx_dataout_t filter_out[M], os_pfb_conf
       int idx = p*M+m;
 
       if (idx <= D-1) {
+        // TODO: synthesis still complains about non-sequential accessing. Since these
+        // are being accessed in reverse order I don't think there is a problem.
         filter_state[idx] = in[idx];
       } else {
         filter_state[idx] = filter_state[idx-D];
@@ -33,19 +36,13 @@ void polyphase_filter(cx_datain_t in[D], cx_dataout_t filter_out[M], os_pfb_conf
   }
 
   //apply phase correction
-  int shift = shift_states[0];
-  int oidx;
+  int shift = shift_states[state_idx];
+  int tmpidx;
   for (int i=0; i<M; ++i) {
-    oidx = (i+shift) % M;
-    filter_out[oidx] = temp[i];
+    tmpidx = (M-shift+i) % M;
+    filter_out[i] = temp[tmpidx];
   }
-
-  // move shift array up by one and copy end to beginning
-  int tmp = shift_states[SHIFT_STATES-1];
-  for (int i=SHIFT_STATES-1; i > 0; --i) {
-    shift_states[i] = shift_states[i-1];
-  }
-  shift_states[0] = tmp;
+  state_idx = (state_idx+1) % SHIFT_STATES;
 
   return;
 }
@@ -54,6 +51,7 @@ void polyphase_filter(cx_datain_t in[D], cx_dataout_t filter_out[M], os_pfb_conf
 // optimization requirements are violated
 void apply_phase_correction (cx_dataout_t filter_out[M], cx_dataout_t ifft_buffer[M]) {
 
+  // TODO: match implementation above in polyphase filter
   // shift states that have been pre-determined. Need to figure out how to auto-generate
   static int shift_states[SHIFT_STATES] = {0, 24, 16, 8};
 
